@@ -1,0 +1,1 @@
+chrome.runtime.onMessage.addListener(((e,t,r)=>{if("getHeaders"===e.action){const e=document.querySelectorAll("h1, h2, h3, h4, h5, h6");r({headers:Array.from(e).map((e=>e.textContent.trim()))})}}));
