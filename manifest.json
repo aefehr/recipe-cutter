@@ -16,9 +16,6 @@
         "http://*/*",
         "https://*/*"
       ],
-      "background": {
-        "service_worker": "contentScript.js"
-      },
       "content_scripts": [
         {
           "matches": ["http://*/*", "https://*/*"],
