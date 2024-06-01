@@ -1,5 +1,5 @@
 /* global chrome */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Popup.css';
 
 async function getCurrentTabId(): Promise<number | null> {
@@ -16,45 +16,50 @@ async function getCurrentTabId(): Promise<number | null> {
     const [ingredients, setIngredients] = useState<string[]>([]);
     const [directions, setDirections] = useState<string[]>([]);
   
-    const fetchRecipeDetails = async () => {
-      const tabId = await getCurrentTabId();
-      if (!tabId) {
-        console.error("No active tab found");
-        return;
-      }
+    useEffect(() => {
+      const fetchRecipeDetails = async () => {
+        const tabId = await getCurrentTabId();
+        if (!tabId) {
+          console.error("No active tab found");
+          return;
+        }
   
-      try {
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          files: ['contentScript.js']
-        });
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId },
+            files: ['contentScript.js']
+          });
   
-        chrome.tabs.sendMessage(tabId, { action: "getRecipeDetails" }, (response) => {
-          if (response) {
-            setIngredients(response.ingredients || []);
-            setDirections(response.directions || []);
-          }
-        });
-      } catch (err) {
-        console.error("Failed to inject content script:", err);
-      }
-    };
+          chrome.tabs.sendMessage(tabId, { action: "getRecipeDetails" }, (response) => {
+            if (response) {
+              setIngredients(response.ingredients || []);
+              setDirections(response.directions || []);
+            }
+          });
+        } catch (err) {
+          console.error("Failed to inject content script:", err);
+        }
+      };
+  
+      fetchRecipeDetails();
+    }, []);
   
     return (
-      <div id="popup">
-        <button onClick={fetchRecipeDetails}>Fetch Recipe Details</button>
-        <h1>Ingredients</h1>
-        <ol>
-          {ingredients.map((ingredient, index) => (
-            <li key={index} className="ingredient">{ingredient}</li>
-          ))}
-        </ol>
-        <h1>Directions</h1>
-        <ol>
-          {directions.map((direction, index) => (
-            <li key={index} className="direction">{direction}</li>
-          ))}
-        </ol>
+      <div id="popup-overlay">
+        <div id="popup-content">
+          <h1>Ingredients</h1>
+          <ol>
+            {ingredients.map((ingredient, index) => (
+              <li key={index} className="ingredient">{ingredient}</li>
+            ))}
+          </ol>
+          <h1>Directions</h1>
+          <ol>
+            {directions.map((direction, index) => (
+              <li key={index} className="direction">{direction}</li>
+            ))}
+          </ol>
+        </div>
       </div>
     );
   };
