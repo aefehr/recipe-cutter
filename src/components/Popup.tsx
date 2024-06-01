@@ -44,17 +44,17 @@ async function getCurrentTabId(): Promise<number | null> {
       <div id="popup">
         <button onClick={fetchRecipeDetails}>Fetch Recipe Details</button>
         <h1>Ingredients</h1>
-        <ul>
+        <ol>
           {ingredients.map((ingredient, index) => (
             <li key={index} className="ingredient">{ingredient}</li>
           ))}
-        </ul>
+        </ol>
         <h1>Directions</h1>
-        <ul>
+        <ol>
           {directions.map((direction, index) => (
             <li key={index} className="direction">{direction}</li>
           ))}
-        </ul>
+        </ol>
       </div>
     );
   };
